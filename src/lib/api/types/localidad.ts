@@ -1,11 +1,11 @@
 
-export interface RawLocalidad {
-  idlocalidad?: number;
-  idLocalidad?: number;
-  nombre: string;
+export interface Usuario {
+  idUsuario?: number;
+  idLocalidad?: number; // <-- Asegúrate que sea number
+  // ... resto de propiedades
 }
 
 export interface Localidad {
-  idLocalidad?: number;
+  idLocalidad: number; // <-- Quita el '?' si siempre existe
   nombre: string;
 }

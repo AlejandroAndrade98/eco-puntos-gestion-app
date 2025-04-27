@@ -13,6 +13,7 @@ interface UsuariosTableProps {
   error: string | null;
 }
 
+
 const UsuariosTable = ({ 
   usuarios, 
   localidades, 
@@ -50,7 +51,7 @@ const UsuariosTable = ({
       header: "Localidad",
       cell: (usuario: Usuario) => {
         const localidad = localidades.find(l => l.idLocalidad === usuario.idLocalidad);
-        return localidad ? localidad.nombre : "N/A";
+        return localidad?.nombre || "N/A";
       },
     },
     {

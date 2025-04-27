@@ -24,17 +24,21 @@ const Usuarios = () => {
       try {
         console.log("Fetching usuarios data...");
         const usuariosData = await usuariosApi.getAll();
-        console.log("Usuarios data received:", usuariosData);
+        console.log("Usuarios RAW desde API:", usuariosData); // ✅ Correcto
         setUsuarios(usuariosData);
-
+  
         console.log("Fetching localidades data...");
         const localidadesData = await localidadesApi.getAll();
-        console.log("Localidades data received (raw):", localidadesData);
+        console.log("Localidades RAW desde API:", localidadesData); // ✅ Correcto
+        
         const normalizedLocalidades = (localidadesData as RawLocalidad[]).map((l) => ({
-          idLocalidad: l.idLocalidad ?? l.idlocalidad,
+          idLocalidad: Number(l.idLocalidad ?? l.idlocalidad ?? 0), // Conversión a número
           nombre: l.nombre,
         }));
+        
+        console.log("Localidades Normalizadas:", normalizedLocalidades); // ✅ Correcto
         setLocalidades(normalizedLocalidades);
+  
       } catch (err) {
         console.error("Error fetching data:", err);
         setError(`Error al cargar datos: ${(err as Error).message}`);
@@ -43,7 +47,7 @@ const Usuarios = () => {
         setIsLoading(false);
       }
     };
-
+  
     fetchData();
   }, []);
 
@@ -84,6 +88,12 @@ const Usuarios = () => {
 
   const columns = [
     {
+      key: "idUsuario",
+      header: "ID",
+      // Asegúrate de que usuario.idUsuario no sea undefined
+      cell: (usuario: Usuario) => usuario.idUsuario ?? "N/A",
+    },
+    {
       key: "nombre",
       header: "Nombre",
       cell: (usuario: Usuario) => `${usuario.nombre} ${usuario.apellidos}`,
@@ -102,8 +112,9 @@ const Usuarios = () => {
       key: "localidad",
       header: "Localidad",
       cell: (usuario: Usuario) => {
-        const localidad = localidades.find(l => l.idLocalidad === usuario.idLocalidad);
-        return localidad ? localidad.nombre : "N/A";
+        const localidadId = Number(usuario.idLocalidad); // Convertir a número
+        const localidad = localidades.find(l => l.idLocalidad === localidadId);
+        return localidad?.nombre || "N/A";
       },
     },
     {
@@ -112,6 +123,7 @@ const Usuarios = () => {
       cell: (usuario: Usuario) => usuario.rol,
     },
   ];
+  
 
   return (
     <Layout>
@@ -152,5 +164,6 @@ const Usuarios = () => {
     </Layout>
   );
 };
+
 
 export default Usuarios;
