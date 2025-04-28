@@ -16,6 +16,7 @@ const Usuarios = () => {
   const [currentUsuario, setCurrentUsuario] = useState<Usuario | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,6 +27,18 @@ const Usuarios = () => {
         const usuariosData = await usuariosApi.getAll();
         console.log("Usuarios RAW desde API:", usuariosData); // ✅ Correcto
         setUsuarios(usuariosData);
+
+        const usuariosNormalizados = usuariosData.map((u: any) => ({
+          idUsuario: u.idusuario,     // minúscula → camelCase
+          idLocalidad: u.idlocalidad, // minúscula → camelCase
+          nombre: u.nombre,
+          apellidos: u.apellidos,
+          telefono: u.telefono,
+          email: u.email,
+          direccion: u.direccion,
+          rol: u.rol,
+        }));
+        setUsuarios(usuariosNormalizados);
   
         console.log("Fetching localidades data...");
         const localidadesData = await localidadesApi.getAll();
