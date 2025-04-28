@@ -35,8 +35,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { name: "Residuos", path: "/residuos", icon: <Trash2 size={20} /> },
     { name: "Puntos", path: "/puntos", icon: <Award size={20} /> },
     { name: "Canjes", path: "/canjes", icon: <ShoppingBag size={20} /> },
-    { name: "Notificaciones", path: "/notificaciones", icon: <Bell size={20} /> },
-    { name: "Configuración", path: "/configuracion", icon: <Settings size={20} /> },
+    // { name: "Notificaciones", path: "/notificaciones", icon: <Bell size={20} /> },
+    // { name: "Configuración", path: "/configuracion", icon: <Settings size={20} /> },
   ];
 
   const toggleSidebar = () => {
