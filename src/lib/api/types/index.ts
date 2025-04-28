@@ -4,7 +4,7 @@ export { API_URL } from './common';
 
 // Export all entity interfaces
 export type { Empresa } from './empresa';
-export type { RawLocalidad, Localidad } from './localidad';
+export type { Localidad } from './localidad';
 export type { Residuo } from './residuo';
 export type { ConfiguracionPuntos } from './configuracion-puntos';
 export type { Usuario } from './usuario';
