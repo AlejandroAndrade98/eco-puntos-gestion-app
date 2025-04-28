@@ -1,7 +1,8 @@
+
 import React, { useState, useEffect } from "react";
 import Layout from "@/components/layout/Layout";
 import { PageHeader } from "@/components/ui/page-header";
-import { Usuario, usuariosApi, localidadesApi, Localidad, RawLocalidad } from "@/lib/api";
+import { Usuario, usuariosApi, localidadesApi, Localidad } from "@/lib/api";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { UsuariosForm } from "@/components/usuarios/UsuariosForm";
@@ -25,8 +26,7 @@ const Usuarios = () => {
       try {
         console.log("Fetching usuarios data...");
         const usuariosData = await usuariosApi.getAll();
-        console.log("Usuarios RAW desde API:", usuariosData); // ✅ Correcto
-        setUsuarios(usuariosData);
+        console.log("Usuarios RAW desde API:", usuariosData);
 
         const usuariosNormalizados = usuariosData.map((u: any) => ({
           idUsuario: u.idusuario,     // minúscula → camelCase
@@ -42,14 +42,14 @@ const Usuarios = () => {
   
         console.log("Fetching localidades data...");
         const localidadesData = await localidadesApi.getAll();
-        console.log("Localidades RAW desde API:", localidadesData); // ✅ Correcto
+        console.log("Localidades RAW desde API:", localidadesData);
         
-        const normalizedLocalidades = (localidadesData as RawLocalidad[]).map((l) => ({
+        const normalizedLocalidades = localidadesData.map((l: any) => ({
           idLocalidad: Number(l.idLocalidad ?? l.idlocalidad ?? 0), // Conversión a número
           nombre: l.nombre,
         }));
         
-        console.log("Localidades Normalizadas:", normalizedLocalidades); // ✅ Correcto
+        console.log("Localidades Normalizadas:", normalizedLocalidades);
         setLocalidades(normalizedLocalidades);
   
       } catch (err) {
