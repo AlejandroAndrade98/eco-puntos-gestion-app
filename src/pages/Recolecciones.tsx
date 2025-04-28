@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import Layout from "@/components/layout/Layout";
 import { PageHeader } from "@/components/ui/page-header";
@@ -45,12 +46,18 @@ const Recolecciones = () => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
+        console.log("Fetching recolecciones data...");
         const [recoleccionesData, usuariosData, empresasData, residuosData] = await Promise.all([
           recoleccionesApi.getAll(),
           usuariosApi.getAll(),
           empresasApi.getAll(),
           residuosApi.getAll()
         ]);
+        
+        console.log("Recolecciones data:", recoleccionesData);
+        console.log("Usuarios data:", usuariosData);
+        console.log("Empresas data:", empresasData);
+        console.log("Residuos data:", residuosData);
         
         setRecolecciones(Array.isArray(recoleccionesData) ? recoleccionesData : []);
         setUsuarios(Array.isArray(usuariosData) ? usuariosData : []);
@@ -70,20 +77,22 @@ const Recolecciones = () => {
   const handleAdd = () => {
     // Initialize with defaults
     const defaultForm: Recoleccion = {
-      idUsuario: usuarios.length > 0 && usuarios[0].idUsuario ? usuarios[0].idUsuario : 0,
-      idEmpresa: empresas.length > 0 && empresas[0].idEmpresa ? empresas[0].idEmpresa : 0,
-      idResiduo: residuos.length > 0 && residuos[0].idResiduo ? residuos[0].idResiduo : 0,
+      idUsuario: usuarios.length > 0 ? Number(usuarios[0].idUsuario) : 0,
+      idEmpresa: empresas.length > 0 ? Number(empresas[0].idEmpresa) : 0,
+      idResiduo: residuos.length > 0 ? Number(residuos[0].idResiduo) : 0,
       fechaRecoleccion: new Date().toISOString().split("T")[0],
       pesoKg: 0,
       estado: "Programada",
     };
     
+    console.log("Default form for new recoleccion:", defaultForm);
     setCurrentRecoleccion(null);
     setFormData(defaultForm);
     setIsDialogOpen(true);
   };
 
   const handleEdit = (recoleccion: Recoleccion) => {
+    console.log("Editing recoleccion:", recoleccion);
     setCurrentRecoleccion(recoleccion);
     setFormData({
       idUsuario: recoleccion.idUsuario,
@@ -97,6 +106,7 @@ const Recolecciones = () => {
   };
 
   const handleDelete = (recoleccion: Recoleccion) => {
+    console.log("Preparing to delete recoleccion:", recoleccion);
     setCurrentRecoleccion(recoleccion);
     setIsDeleteDialogOpen(true);
   };
@@ -104,6 +114,7 @@ const Recolecciones = () => {
   const confirmDelete = async () => {
     if (currentRecoleccion?.idRecoleccion) {
       try {
+        console.log("Deleting recoleccion with ID:", currentRecoleccion.idRecoleccion);
         const success = await recoleccionesApi.delete(currentRecoleccion.idRecoleccion);
         if (success) {
           setRecolecciones(recolecciones.filter(r => r.idRecoleccion !== currentRecoleccion.idRecoleccion));
@@ -120,6 +131,8 @@ const Recolecciones = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    console.log("Submitting form data:", formData);
+    
     if (!formData.idUsuario || !formData.idEmpresa || !formData.idResiduo || !formData.fechaRecoleccion || formData.pesoKg <= 0) {
       toast.error("Por favor complete todos los campos obligatorios correctamente.");
       return;
@@ -128,6 +141,7 @@ const Recolecciones = () => {
     try {
       let result;
       if (currentRecoleccion?.idRecoleccion) {
+        console.log("Updating recoleccion with ID:", currentRecoleccion.idRecoleccion);
         result = await recoleccionesApi.update(currentRecoleccion.idRecoleccion, formData);
         if (result) {
           setRecolecciones(
@@ -135,21 +149,20 @@ const Recolecciones = () => {
               r.idRecoleccion === currentRecoleccion.idRecoleccion ? { ...r, ...result } : r
             )
           );
+          toast.success("Recolección actualizada exitosamente");
         }
       } else {
+        console.log("Creating new recoleccion");
         result = await recoleccionesApi.create(formData);
+        console.log("Create result:", result);
         if (result) {
           setRecolecciones([...recolecciones, result]);
+          toast.success("Recolección creada exitosamente");
         }
       }
 
       if (result) {
         setIsDialogOpen(false);
-        toast.success(
-          currentRecoleccion 
-            ? "Recolección actualizada exitosamente" 
-            : "Recolección creada exitosamente"
-        );
       }
     } catch (error) {
       console.error("Error saving recoleccion:", error);
